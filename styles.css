@@ -302,3 +302,41 @@ button:hover {
     min-height: 140px;
   }
 }
+
+.detalles-producto {
+  display: none;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.btn-producto.seleccionado .detalles-producto {
+  display: flex;
+}
+
+.detalles-producto input,
+.detalles-producto textarea,
+.detalles-producto button {
+  font-size: 0.95rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+}
+
+.detalles-producto input[type="number"],
+.detalles-producto input[type="text"] {
+  border: 1px solid #ccc;
+  width: 100%;
+}
+
+.detalles-producto button {
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.detalles-producto button:hover {
+  background-color: #0b5ed7;
+}
