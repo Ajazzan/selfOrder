@@ -198,17 +198,16 @@ function cargarProductos(filtro = "") {
 
       const addBtn = btn.querySelector(".btn-add-item");
       addBtn.addEventListener("click", (e) => {
-        e.stopPropagation(); // evitar doble click en contenedor
+        e.stopPropagation();
         const cantidad = parseInt(btn.querySelector("input[type='number']").value);
         const observacion = btn.querySelector("input[type='text']").value;
-        if (!productoSeleccionado || isNaN(cantidad) || cantidad < 1) return;
+        if (isNaN(cantidad) || cantidad < 1) return;
         comandaActual.push({
-          idProducto: productoSeleccionado,
+          idProducto: index,
           cantidad,
           observacion: observacion || ""
         });
         actualizarComanda();
-        // reset
         btn.classList.remove("seleccionado");
         btn.querySelector(".extra-opciones").style.display = "none";
       });
@@ -221,19 +220,19 @@ function actualizarComanda() {
   let texto = `Cliente: ${inputCliente.value}\nPedido:\n`;
   let total = 0;
 
-  comandaActual.forEach((item, i) => {
+  comandaActual.forEach((item) => {
     const prod = productos[item.idProducto];
     const subtotal = prod.precio * item.cantidad;
     const bs = Math.ceil(subtotal * tasaCambio);
     const usd = subtotal.toFixed(2);
-    texto += `${(i + 1).toString().padStart(2, "0")} ${prod.nombre} x${item.cantidad}`;
+    const emoji = item.observacion ? "👀" : "✅";
+    texto += `${emoji} x${item.cantidad} ${prod.nombre}`;
     if (item.observacion) texto += ` (${item.observacion})`;
     texto += ` - ${selectPago.value === "bolivares" ? `Bs ${bs}` : `$${usd}`}\n`;
     total += subtotal;
   });
 
-  texto += `\n${checkboxLlevar.checked ? 'Llevar _X_ Aquí ___' : 'Llevar ___ Aquí _X_'}
-  `;
+  texto += `\n${checkboxLlevar.checked ? 'Llevar _X_ Aquí ___' : 'Llevar ___ Aquí _X_'}\n`;
 
   const totalBs = Math.ceil(total * tasaCambio);
   const totalUsd = total.toFixed(2);
@@ -242,7 +241,7 @@ function actualizarComanda() {
 
   textareaComanda.value = texto;
 
-  const telefono = "584140613260"; // Cambiar por el número real
+  const telefono = "584140613260";
   const mensajeCodificado = encodeURIComponent(textareaComanda.value);
   const url = `https://wa.me/${telefono}?text=${mensajeCodificado}`;
   btnWhatsapp.href = url;
@@ -272,9 +271,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 checkboxLlevar.addEventListener('change', actualizarComanda);
 inputCliente.addEventListener('input', actualizarComanda);
-
-
 </script>
+
 
 </body>
 </html>
