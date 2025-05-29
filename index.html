@@ -69,10 +69,12 @@
         <h2>Productos</h2>
         <div id="productos-container" class="productos-grid"></div>
 
-        <div class="cantidad-container">
-          <input type="number" id="cantidad" value="1" min="1" placeholder="Cantidad" />
-          <input type="text" id="observacion" placeholder="Observación" style="display:none;" />
-        </div>
+<div class="cantidad-container">
+  <label for="cantidad" style="font-weight:bold; margin-right:8px;">Cantidad:</label>
+  <input type="number" id="cantidad" value="1" min="1" placeholder="Cantidad">
+  <input type="text" id="observacion" placeholder="Observación" style="display:none; flex:1;">
+</div>
+
 
         <div class="acciones">
           <button id="agregar-producto" class="btn-generar">Agregar a Comanda</button>

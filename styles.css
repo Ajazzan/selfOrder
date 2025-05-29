@@ -262,3 +262,43 @@ button:hover {
     flex-direction: column;
   }
 }
+
+/* Ajustes para móviles */
+@media (max-width: 900px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  .col-izq, .col-der {
+    min-width: 0;
+  }
+  .productos-grid {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+  .cantidad-container {
+    flex-direction: row; /* Mejor poner la cantidad y observación en fila para no alargar */
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  .cantidad-container input[type="number"],
+  .cantidad-container input[type="text"] {
+    flex: 0 0 80px; /* cantidad pequeña y clara */
+    min-width: auto;
+    font-size: 1.1rem;
+    padding: 0.5rem;
+  }
+  /* Botones en columna pero con más altura para mejor toque */
+  .acciones {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .acciones button {
+    flex: 1 1 auto;
+    padding: 1rem 0;
+    font-size: 1.1rem;
+  }
+  /* Evitar que textarea ocupe demasiado alto en móvil */
+  .comanda textarea {
+    min-height: 140px;
+  }
+}
