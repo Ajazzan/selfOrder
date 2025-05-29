@@ -1,10 +1,44 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Comanda Responsive</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8" />
+  <title>Comanda Responsive con WhatsApp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Solo para el botón WhatsApp, añade esto a tu styles.css si quieres */
+    .btn-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background-color: #25d366;
+      color: white;
+      border-radius: 6px;
+      padding: 0.65rem 1rem;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background-color 0.2s;
+      border: none;
+      user-select: none;
+    }
+    .btn-whatsapp:hover:not(.disabled) {
+      background-color: #1ebe57;
+      text-decoration: none;
+      color: white;
+    }
+    .btn-whatsapp.disabled {
+      pointer-events: none;
+      opacity: 0.6;
+      cursor: default;
+    }
+    .btn-whatsapp svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
@@ -12,7 +46,7 @@
     <div class="main-grid">
       <div class="col-izq">
         <div class="form-group">
-          <input type="text" id="cliente" placeholder="Nombre del cliente">
+          <input type="text" id="cliente" placeholder="Nombre del cliente" />
         </div>
 
         <div class="form-group">
@@ -24,28 +58,30 @@
 
         <div class="llevar-container">
           <label>
-            <input type="checkbox" id="para-llevar"> Para llevar
+            <input type="checkbox" id="para-llevar" /> Para llevar
           </label>
         </div>
 
         <div class="form-group">
-          <input type="text" id="busqueda" placeholder="Buscar producto...">
+          <input type="text" id="busqueda" placeholder="Buscar producto..." />
         </div>
 
         <h2>Productos</h2>
         <div id="productos-container" class="productos-grid"></div>
 
         <div class="cantidad-container">
-          <input type="number" id="cantidad" value="1" min="1" placeholder="Cantidad">
-          <input type="text" id="observacion" placeholder="Observación" style="display:none;">
+          <input type="number" id="cantidad" value="1" min="1" placeholder="Cantidad" />
+          <input type="text" id="observacion" placeholder="Observación" style="display:none;" />
         </div>
 
         <div class="acciones">
           <button id="agregar-producto" class="btn-generar">Agregar a Comanda</button>
-          <a id="btn-whatsapp" class="btn-whatsapp" href="#" target="_blank">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="height: 20px; vertical-align: middle; margin-right: 8px;">
-  Enviar por WhatsApp
-</a>
+          <a id="btn-whatsapp" href="#" target="_blank" class="btn-whatsapp disabled" title="Enviar comanda por WhatsApp">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path d="M20.52 3.48a11.833 11.833 0 00-16.747 0c-4.66 4.66-4.737 12.145-.237 16.634l-2.202 5.152 5.33-2.139a11.827 11.827 0 0016.563-16.563zm-7.18 16.027a9.36 9.36 0 01-5.075-1.561l-.361-.222-3.013 1.21 1.272-2.932-.236-.377a9.374 9.374 0 0116.362-6.4 9.372 9.372 0 01-8.949 9.91zm5.177-6.563c-.286-.143-1.688-.832-1.95-.927-.261-.093-.452-.143-.644.143-.193.286-.743.927-.912 1.116-.168.191-.337.214-.623.072-.286-.143-1.207-.444-2.3-1.412-.85-.757-1.423-1.693-1.59-1.98-.168-.286-.018-.44.126-.582.13-.128.286-.337.429-.506.143-.168.191-.286.286-.476.095-.19.048-.357-.024-.5-.072-.143-.644-1.55-.882-2.123-.232-.558-.468-.482-.644-.491l-.55-.01c-.19 0-.5.072-.763.357s-1 1-1 2.441 1.024 2.828 1.168 3.027c.143.19 2.01 3.067 4.868 4.3.68.293 1.21.468 1.625.6.683.217 1.306.186 1.8.113.55-.08 1.688-.688 1.927-1.355.238-.666.238-1.238.167-1.356-.07-.118-.26-.19-.545-.333z"/>
+            </svg>
+            Enviar por WhatsApp
+          </a>
           <button id="limpiar" class="btn-limpiar">Limpiar</button>
         </div>
       </div>
@@ -58,63 +94,64 @@
   </div>
 
   <script>
-    // Se mantienen todos los productos y funciones anteriores
-  let productos = [
-  { "nombre": "Hamb Pollo", "precio": 1.3 },
-  { "nombre": "Hamb Carne", "precio": 1.3 },
-  { "nombre": "WHOPPER CLASSICA", "precio": 2.5 },
-  { "nombre": "WHOPPER CHICKEN", "precio": 2.5 },
-  { "nombre": "WHOPPER DE LOMO", "precio": 3 },
-  { "nombre": "WHOPPER DE CHORIZO", "precio": 3 },
-  { "nombre": "COCACOLA 355ML", "precio": 0.7 },
-  { "nombre": "COCACOLA 1LT", "precio": 1.3 },
-  { "nombre": "COCACOLA 1.25LT", "precio": 1.3 },
-  { "nombre": "COCACOLA 1.5LT", "precio": 1.6 },
-  { "nombre": "COCACOLA 2LT", "precio": 2 },
-  { "nombre": "MALTA 222ML", "precio": 0.6 },
-  { "nombre": "MALTA 1.5LT", "precio": 2.5 },
-  { "nombre": "PULP", "precio": 0.5 },
-  { "nombre": "PERRO SENCILLO", "precio": 1 },
-  { "nombre": "PERRO ESPACIAL", "precio": 3 },
-  { "nombre": "SALCHI-QUESO", "precio": 2 },
-  { "nombre": "PAN CON POLLO", "precio": 2.5 },
-  { "nombre": "PAN CON LOMO", "precio": 3 },
-  { "nombre": "PAN CON CHORIZO", "precio": 3 },
-  { "nombre": "DONALD CLASSICA", "precio": 2.5 },
-  { "nombre": "DONALD POLLO", "precio": 2.5 },
-  { "nombre": "DONALD LOMO", "precio": 3 },
-  { "nombre": "DONALD CHORIZO", "precio": 3 },
-  { "nombre": "WHOPPER ESPECIAL CLASSICA", "precio": 6 },
-  { "nombre": "WHOPPER ESPECIAL CHICKEN", "precio": 6 },
-  { "nombre": "WHOPPER ESPECIAL DE LOMO", "precio": 6 },
-  { "nombre": "WHOPPER ESPECIAL DE CHORIZO", "precio": 7 },
-  { "nombre": "WHOPPER MIXTAS 2 PROTEINAS", "precio": 6 },
-  { "nombre": "WHOPPER MIXTAS 3 PROTEINAS", "precio": 8.5 },
-  { "nombre": "PAPAS FRITAS (200g)", "precio": 2.5 },
-  { "nombre": "SALCHIPAPAS NACIONALES (750g)", "precio": 4 },
-  { "nombre": "SALCHIPAPAS IMPORTADAS (150g)", "precio": 3.5 }
-];
- // <- aquí debes pegar tu array completo de productos
+    let productos = [
+      // Agrega aquí tu lista de productos con nombres y precios en dólares.
+      { nombre: "Hamb Pollo", precio: 1.3 },
+      { nombre: "Hamb Carne", precio: 1.3 },
+      { nombre: "WHOPPER CLASSICA", precio: 2.5 },
+      { nombre: "WHOPPER CHICKEN", precio: 2.5 },
+      { nombre: "WHOPPER DE LOMO", precio: 3 },
+      { nombre: "WHOPPER DE CHORIZO", precio: 3 },
+      { nombre: "COCACOLA 355ML", precio: 0.7 },
+      { nombre: "COCACOLA 1LT", precio: 1.3 },
+      { nombre: "COCACOLA 1.25LT", precio: 1.3 },
+      { nombre: "COCACOLA 1.5LT", precio: 1.6 },
+      { nombre: "COCACOLA 2LT", precio: 2 },
+      { nombre: "MALTA 222ML", precio: 0.6 },
+      { nombre: "MALTA 1.5LT", precio: 2.5 },
+      { nombre: "PULP", precio: 0.5 },
+      { nombre: "PERRO SENCILLO", precio: 1 },
+      { nombre: "PERRO ESPACIAL", precio: 3 },
+      { nombre: "SALCHI-QUESO", precio: 2 },
+      { nombre: "PAN CON POLLO", precio: 2.5 },
+      { nombre: "PAN CON LOMO", precio: 3 },
+      { nombre: "PAN CON CHORIZO", precio: 3 },
+      { nombre: "DONALD CLASSICA", precio: 2.5 },
+      { nombre: "DONALD POLLO", precio: 2.5 },
+      { nombre: "DONALD LOMO", precio: 3 },
+      { nombre: "DONALD CHORIZO", precio: 3 },
+      { nombre: "WHOPPER ESPECIAL CLASSICA", precio: 6 },
+      { nombre: "WHOPPER ESPECIAL CHICKEN", precio: 6 },
+      { nombre: "WHOPPER ESPECIAL DE LOMO", precio: 6 },
+      { nombre: "WHOPPER ESPECIAL DE CHORIZO", precio: 7 },
+      { nombre: "WHOPPER MIXTAS 2 PROTEINAS", precio: 6 },
+      { nombre: "WHOPPER MIXTAS 3 PROTEINAS", precio: 8.5 },
+      { nombre: "PAPAS FRITAS (200g)", precio: 2.5 },
+      { nombre: "SALCHIPAPAS NACIONALES (750g)", precio: 4 },
+      { nombre: "SALCHIPAPAS IMPORTADAS (150g)", precio: 3.5 }
+    ];
 
     let comandaActual = [];
     let productoSeleccionado = null;
-    let tasaCambio = 40;
+    let tasaCambio = 100;
 
-    const productosContainer = document.getElementById('productos-container');
-    const inputCliente = document.getElementById('cliente');
-    const inputCantidad = document.getElementById('cantidad');
-    const inputObservacion = document.getElementById('observacion');
-    const textareaComanda = document.getElementById('comanda-text');
-    const checkboxLlevar = document.getElementById('para-llevar');
-    const selectPago = document.getElementById('metodo-pago');
-    const btnAgregar = document.getElementById('agregar-producto');
-    const btnWhatsApp = document.getElementById('whatsapp-btn');
-    const btnLimpiar = document.getElementById('limpiar');
-    const inputBusqueda = document.getElementById('busqueda');
+    const productosContainer = document.getElementById("productos-container");
+    const inputCliente = document.getElementById("cliente");
+    const inputCantidad = document.getElementById("cantidad");
+    const inputObservacion = document.getElementById("observacion");
+    const textareaComanda = document.getElementById("comanda-text");
+    const checkboxLlevar = document.getElementById("para-llevar");
+    const selectPago = document.getElementById("metodo-pago");
+    const btnAgregar = document.getElementById("agregar-producto");
+    const btnWhatsapp = document.getElementById("btn-whatsapp");
+    const btnLimpiar = document.getElementById("limpiar");
+    const inputBusqueda = document.getElementById("busqueda");
 
     async function obtenerTasaCambio() {
       try {
-        const respuesta = await fetch('https://pydolarve.org/api/v1/dollar?page=bcv');
+        const respuesta = await fetch(
+          "https://pydolarve.org/api/v1/dollar?page=bcv"
+        );
         const data = await respuesta.json();
         const oficial = parseFloat(data.monitors.usd.price);
         tasaCambio = Math.ceil(oficial * 1.0175);
@@ -123,112 +160,159 @@
       }
     }
 
-    function cargarProductos(filtro = '') {
-      productosContainer.innerHTML = '';
+    function cargarProductos(filtro = "") {
+      productosContainer.innerHTML = "";
       productos
-        .filter(p => p.nombre.toLowerCase().includes(filtro.toLowerCase()))
+        .filter((p) => p.nombre.toLowerCase().includes(filtro.toLowerCase()))
         .forEach((producto, index) => {
-          const btn = document.createElement('button');
-          btn.className = 'btn-producto';
+          const btn = document.createElement("button");
+          btn.className = "btn-producto";
 
           const bs = `Bs ${Math.ceil(producto.precio * tasaCambio)}`;
           const usd = `$${producto.precio.toFixed(2)}`;
 
-          const mostrarPrecio = selectPago.value === 'bolivares'
-            ? `${bs} (${usd})`
-            : `${usd} (${bs})`;
+          const mostrarPrecio =
+            selectPago.value === "bolivares"
+              ? `${bs} (${usd})`
+              : `${usd} (${bs})`;
 
           btn.innerHTML = `
             <span class="nombre">${producto.nombre}</span>
             <span class="precio">${mostrarPrecio}</span>
           `;
-          btn.addEventListener('click', () => {
-            document.querySelectorAll('.btn-producto').forEach(b => b.classList.remove('seleccionado'));
-            btn.classList.add('seleccionado');
-            productoSeleccionado = productos.findIndex(p => p.nombre === producto.nombre);
-            inputObservacion.style.display = 'block';
+          btn.addEventListener("click", () => {
+            document
+              .querySelectorAll(".btn-producto")
+              .forEach((b) => b.classList.remove("seleccionado"));
+            btn.classList.add("seleccionado");
+            productoSeleccionado = productos.findIndex(
+              (p) => p.nombre === producto.nombre
+            );
+            inputObservacion.style.display = "block";
           });
           productosContainer.appendChild(btn);
         });
     }
 
     function actualizarComanda() {
-      let texto = `Cliente: ${inputCliente.value}\nPedido:\n`;
-      let total = 0;
+  let texto = `Cliente: ${inputCliente.value}\nPedido:\n`;
+  let total = 0;
 
-      comandaActual.forEach(item => {
-        const prod = productos[item.idProducto];
-        const subtotal = prod.precio * item.cantidad;
-        const bs = Math.ceil(subtotal * tasaCambio);
-        const usd = subtotal.toFixed(2);
+  comandaActual.forEach((item, i) => {
+    const prod = productos[item.idProducto];
+    const subtotal = prod.precio * item.cantidad;
+    const bs = Math.ceil(subtotal * tasaCambio);
+    const usd = subtotal.toFixed(2);
 
-        const mostrarPrecio = selectPago.value === 'bolivares'
-          ? `${bs} Bs ($${usd})`
-          : `$${usd} (Bs ${bs})`;
+    texto += `${(i + 1).toString().padStart(2, "0")} ${prod.nombre} - ${bs} Bs ($${usd})\n`;
 
-        texto += `${item.cantidad.toString().padStart(2, '0')} ${prod.nombre}`;
-        if (item.observacion) texto += ` (${item.observacion})`;
-        texto += ` - ${mostrarPrecio}\n`;
-        total += subtotal;
-      });
-
-      texto += `\n${checkboxLlevar.checked ? 'Llevar _X_ Aquí ___' : 'Llevar ___ Aquí _X_'}\n`;
-
-      const totalBs = Math.ceil(total * tasaCambio);
-      const totalUsd = total.toFixed(2);
-      texto += `\nMonto: ${selectPago.value === 'bolivares' ? `${totalBs} Bs ($${totalUsd})` : `$${totalUsd} (Bs ${totalBs})`}\n`;
-
-      textareaComanda.value = texto;
-
-      const mensaje = encodeURIComponent(texto);
-      const numero = '+584140613260';
-      btnWhatsApp.href = `https://wa.me/${numero.replace('+', '')}?text=${mensaje}`;
+    if (item.observacion) {
+      texto += `    Obs: ${item.observacion}\n`;
     }
 
-    btnAgregar.addEventListener('click', () => {
-      const cantidad = parseInt(inputCantidad.value);
-      const observacion = inputObservacion.value.trim();
+    total += subtotal;
+  });
 
-      if (productoSeleccionado === null || isNaN(cantidad) || cantidad <= 0) {
-        alert('Selecciona un producto y coloca una cantidad válida.');
+  const totalBs = Math.ceil(total * tasaCambio);
+  const totalUsd = total.toFixed(2);
+
+  texto += `\nLlevar ___ Aquí ${checkboxLlevar.checked ? "_X_" : "___"}\n\n`;
+  texto += `Monto: ${totalBs} Bs ($${totalUsd})`;
+
+  textareaComanda.value = texto;
+
+  actualizarLinkWhatsApp();
+}
+
+
+    function actualizarLinkWhatsApp() {
+      if (comandaActual.length === 0 || !inputCliente.value.trim()) {
+        btnWhatsapp.removeAttribute("href");
+        btnWhatsapp.classList.add("disabled");
+        return;
+      }
+      const texto = encodeURIComponent(textareaComanda.value.trim());
+      const numero = "584140613260"; // tu número sin +
+      const url = `https://wa.me/${numero}?text=${texto}`;
+      btnWhatsapp.href = url;
+      btnWhatsapp.classList.remove("disabled");
+    }
+
+    btnAgregar.addEventListener("click", () => {
+      if (productoSeleccionado === null) {
+        alert("Selecciona un producto");
         return;
       }
 
-      comandaActual.push({ idProducto: productoSeleccionado, cantidad, observacion });
+      const cantidad = parseInt(inputCantidad.value);
+      if (isNaN(cantidad) || cantidad <= 0) {
+        alert("Ingresa una cantidad válida");
+        return;
+      }
+
+      const observacion = inputObservacion.value.trim();
+
+      // Verifica si producto ya está en la comanda para acumular cantidades
+      const indexExistente = comandaActual.findIndex(
+        (item) => item.idProducto === productoSeleccionado && item.observacion === observacion
+      );
+      if (indexExistente >= 0) {
+        comandaActual[indexExistente].cantidad += cantidad;
+      } else {
+        comandaActual.push({
+          idProducto: productoSeleccionado,
+          cantidad: cantidad,
+          observacion: observacion,
+        });
+      }
+
+      // Resetea inputs
       inputCantidad.value = 1;
-      inputObservacion.value = '';
-      inputObservacion.style.display = 'none';
-      document.querySelectorAll('.btn-producto').forEach(btn => btn.classList.remove('seleccionado'));
+      inputObservacion.value = "";
+      inputObservacion.style.display = "none";
       productoSeleccionado = null;
+      document
+        .querySelectorAll(".btn-producto")
+        .forEach((b) => b.classList.remove("seleccionado"));
+
       actualizarComanda();
     });
 
-    btnLimpiar.addEventListener('click', () => {
+    btnLimpiar.addEventListener("click", () => {
       comandaActual = [];
-      productoSeleccionado = null;
-      inputCliente.value = '';
+      inputCliente.value = "";
       inputCantidad.value = 1;
-      inputObservacion.value = '';
-      inputObservacion.style.display = 'none';
-      textareaComanda.value = '';
-      document.querySelectorAll('.btn-producto').forEach(btn => btn.classList.remove('seleccionado'));
-      cargarProductos(inputBusqueda.value);
-      btnWhatsApp.href = '#';
+      inputObservacion.value = "";
+      inputObservacion.style.display = "none";
+      productoSeleccionado = null;
+      textareaComanda.value = "";
+      checkboxLlevar.checked = false;
+      selectPago.value = "bolivares";
+      inputBusqueda.value = "";
+      document
+        .querySelectorAll(".btn-producto")
+        .forEach((b) => b.classList.remove("seleccionado"));
+      cargarProductos();
+      actualizarLinkWhatsApp();
     });
 
-    selectPago.addEventListener('change', () => {
+    selectPago.addEventListener("change", () => {
       cargarProductos(inputBusqueda.value);
       actualizarComanda();
     });
 
-    checkboxLlevar.addEventListener('change', actualizarComanda);
-    inputCliente.addEventListener('input', actualizarComanda);
-    inputBusqueda.addEventListener('input', () => cargarProductos(inputBusqueda.value));
+    checkboxLlevar.addEventListener("change", actualizarComanda);
+    inputCliente.addEventListener("input", actualizarComanda);
 
-    (async () => {
+    inputBusqueda.addEventListener("input", () => {
+      cargarProductos(inputBusqueda.value);
+    });
+
+    window.onload = async () => {
       await obtenerTasaCambio();
       cargarProductos();
-    })();
+      actualizarLinkWhatsApp();
+    };
   </script>
 </body>
 </html>
