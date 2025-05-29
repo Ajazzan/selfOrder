@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Comanda Responsive</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Generador de Comandas</h1>
+    <div class="main-grid">
+      <div class="col-izq">
+        <div class="form-group">
+          <input type="text" id="cliente" placeholder="Nombre del cliente">
+        </div>
+
+        <div class="form-group">
+          <select id="metodo-pago">
+            <option value="bolivares" selected>Bolívares</option>
+            <option value="dolares">Dólares</option>
+          </select>
+        </div>
+
+        <div class="llevar-container">
+          <label>
+            <input type="checkbox" id="para-llevar"> Para llevar
+          </label>
+        </div>
+
+        <div class="form-group">
+          <input type="text" id="busqueda" placeholder="Buscar producto...">
+        </div>
+
+        <h2>Productos</h2>
+        <div id="productos-container" class="productos-grid"></div>
+
+        <div class="cantidad-container">
+          <input type="number" id="cantidad" value="1" min="1" placeholder="Cantidad">
+          <input type="text" id="observacion" placeholder="Observación" style="display:none;">
+        </div>
+
+        <div class="acciones">
+          <button id="agregar-producto" class="btn-generar">Agregar a Comanda</button>
+          <a id="btn-whatsapp" class="btn-whatsapp" href="#" target="_blank">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="height: 20px; vertical-align: middle; margin-right: 8px;">
+  Enviar por WhatsApp
+</a>
+          <button id="limpiar" class="btn-limpiar">Limpiar</button>
+        </div>
+      </div>
+
+      <div class="col-der comanda">
+        <h2>Comanda</h2>
+        <textarea id="comanda-text" readonly></textarea>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Se mantienen todos los productos y funciones anteriores
+  let productos = [
+  { "nombre": "Hamb Pollo", "precio": 1.3 },
+  { "nombre": "Hamb Carne", "precio": 1.3 },
+  { "nombre": "WHOPPER CLASSICA", "precio": 2.5 },
+  { "nombre": "WHOPPER CHICKEN", "precio": 2.5 },
+  { "nombre": "WHOPPER DE LOMO", "precio": 3 },
+  { "nombre": "WHOPPER DE CHORIZO", "precio": 3 },
+  { "nombre": "COCACOLA 355ML", "precio": 0.7 },
+  { "nombre": "COCACOLA 1LT", "precio": 1.3 },
+  { "nombre": "COCACOLA 1.25LT", "precio": 1.3 },
+  { "nombre": "COCACOLA 1.5LT", "precio": 1.6 },
+  { "nombre": "COCACOLA 2LT", "precio": 2 },
+  { "nombre": "MALTA 222ML", "precio": 0.6 },
+  { "nombre": "MALTA 1.5LT", "precio": 2.5 },
+  { "nombre": "PULP", "precio": 0.5 },
+  { "nombre": "PERRO SENCILLO", "precio": 1 },
+  { "nombre": "PERRO ESPACIAL", "precio": 3 },
+  { "nombre": "SALCHI-QUESO", "precio": 2 },
+  { "nombre": "PAN CON POLLO", "precio": 2.5 },
+  { "nombre": "PAN CON LOMO", "precio": 3 },
+  { "nombre": "PAN CON CHORIZO", "precio": 3 },
+  { "nombre": "DONALD CLASSICA", "precio": 2.5 },
+  { "nombre": "DONALD POLLO", "precio": 2.5 },
+  { "nombre": "DONALD LOMO", "precio": 3 },
+  { "nombre": "DONALD CHORIZO", "precio": 3 },
+  { "nombre": "WHOPPER ESPECIAL CLASSICA", "precio": 6 },
+  { "nombre": "WHOPPER ESPECIAL CHICKEN", "precio": 6 },
+  { "nombre": "WHOPPER ESPECIAL DE LOMO", "precio": 6 },
+  { "nombre": "WHOPPER ESPECIAL DE CHORIZO", "precio": 7 },
+  { "nombre": "WHOPPER MIXTAS 2 PROTEINAS", "precio": 6 },
+  { "nombre": "WHOPPER MIXTAS 3 PROTEINAS", "precio": 8.5 },
+  { "nombre": "PAPAS FRITAS (200g)", "precio": 2.5 },
+  { "nombre": "SALCHIPAPAS NACIONALES (750g)", "precio": 4 },
+  { "nombre": "SALCHIPAPAS IMPORTADAS (150g)", "precio": 3.5 }
+];
+ // <- aquí debes pegar tu array completo de productos
+
+    let comandaActual = [];
+    let productoSeleccionado = null;
+    let tasaCambio = 40;
+
+    const productosContainer = document.getElementById('productos-container');
+    const inputCliente = document.getElementById('cliente');
+    const inputCantidad = document.getElementById('cantidad');
+    const inputObservacion = document.getElementById('observacion');
+    const textareaComanda = document.getElementById('comanda-text');
+    const checkboxLlevar = document.getElementById('para-llevar');
+    const selectPago = document.getElementById('metodo-pago');
+    const btnAgregar = document.getElementById('agregar-producto');
+    const btnWhatsApp = document.getElementById('whatsapp-btn');
+    const btnLimpiar = document.getElementById('limpiar');
+    const inputBusqueda = document.getElementById('busqueda');
+
+    async function obtenerTasaCambio() {
+      try {
+        const respuesta = await fetch('https://pydolarve.org/api/v1/dollar?page=bcv');
+        const data = await respuesta.json();
+        const oficial = parseFloat(data.monitors.usd.price);
+        tasaCambio = Math.ceil(oficial * 1.0175);
+      } catch (e) {
+        alert("No se pudo obtener la tasa de cambio. Usando tasa por defecto.");
+      }
+    }
+
+    function cargarProductos(filtro = '') {
+      productosContainer.innerHTML = '';
+      productos
+        .filter(p => p.nombre.toLowerCase().includes(filtro.toLowerCase()))
+        .forEach((producto, index) => {
+          const btn = document.createElement('button');
+          btn.className = 'btn-producto';
+
+          const bs = `Bs ${Math.ceil(producto.precio * tasaCambio)}`;
+          const usd = `$${producto.precio.toFixed(2)}`;
+
+          const mostrarPrecio = selectPago.value === 'bolivares'
+            ? `${bs} (${usd})`
+            : `${usd} (${bs})`;
+
+          btn.innerHTML = `
+            <span class="nombre">${producto.nombre}</span>
+            <span class="precio">${mostrarPrecio}</span>
+          `;
+          btn.addEventListener('click', () => {
+            document.querySelectorAll('.btn-producto').forEach(b => b.classList.remove('seleccionado'));
+            btn.classList.add('seleccionado');
+            productoSeleccionado = productos.findIndex(p => p.nombre === producto.nombre);
+            inputObservacion.style.display = 'block';
+          });
+          productosContainer.appendChild(btn);
+        });
+    }
+
+    function actualizarComanda() {
+      let texto = `Cliente: ${inputCliente.value}\nPedido:\n`;
+      let total = 0;
+
+      comandaActual.forEach(item => {
+        const prod = productos[item.idProducto];
+        const subtotal = prod.precio * item.cantidad;
+        const bs = Math.ceil(subtotal * tasaCambio);
+        const usd = subtotal.toFixed(2);
+
+        const mostrarPrecio = selectPago.value === 'bolivares'
+          ? `${bs} Bs ($${usd})`
+          : `$${usd} (Bs ${bs})`;
+
+        texto += `${item.cantidad.toString().padStart(2, '0')} ${prod.nombre}`;
+        if (item.observacion) texto += ` (${item.observacion})`;
+        texto += ` - ${mostrarPrecio}\n`;
+        total += subtotal;
+      });
+
+      texto += `\n${checkboxLlevar.checked ? 'Llevar _X_ Aquí ___' : 'Llevar ___ Aquí _X_'}\n`;
+
+      const totalBs = Math.ceil(total * tasaCambio);
+      const totalUsd = total.toFixed(2);
+      texto += `\nMonto: ${selectPago.value === 'bolivares' ? `${totalBs} Bs ($${totalUsd})` : `$${totalUsd} (Bs ${totalBs})`}\n`;
+
+      textareaComanda.value = texto;
+
+      const mensaje = encodeURIComponent(texto);
+      const numero = '+584140613260';
+      btnWhatsApp.href = `https://wa.me/${numero.replace('+', '')}?text=${mensaje}`;
+    }
+
+    btnAgregar.addEventListener('click', () => {
+      const cantidad = parseInt(inputCantidad.value);
+      const observacion = inputObservacion.value.trim();
+
+      if (productoSeleccionado === null || isNaN(cantidad) || cantidad <= 0) {
+        alert('Selecciona un producto y coloca una cantidad válida.');
+        return;
+      }
+
+      comandaActual.push({ idProducto: productoSeleccionado, cantidad, observacion });
+      inputCantidad.value = 1;
+      inputObservacion.value = '';
+      inputObservacion.style.display = 'none';
+      document.querySelectorAll('.btn-producto').forEach(btn => btn.classList.remove('seleccionado'));
+      productoSeleccionado = null;
+      actualizarComanda();
+    });
+
+    btnLimpiar.addEventListener('click', () => {
+      comandaActual = [];
+      productoSeleccionado = null;
+      inputCliente.value = '';
+      inputCantidad.value = 1;
+      inputObservacion.value = '';
+      inputObservacion.style.display = 'none';
+      textareaComanda.value = '';
+      document.querySelectorAll('.btn-producto').forEach(btn => btn.classList.remove('seleccionado'));
+      cargarProductos(inputBusqueda.value);
+      btnWhatsApp.href = '#';
+    });
+
+    selectPago.addEventListener('change', () => {
+      cargarProductos(inputBusqueda.value);
+      actualizarComanda();
+    });
+
+    checkboxLlevar.addEventListener('change', actualizarComanda);
+    inputCliente.addEventListener('input', actualizarComanda);
+    inputBusqueda.addEventListener('input', () => cargarProductos(inputBusqueda.value));
+
+    (async () => {
+      await obtenerTasaCambio();
+      cargarProductos();
+    })();
+  </script>
+</body>
+</html>
